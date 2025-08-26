@@ -42,16 +42,23 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-black text-white px-2 py-3 xs:px-3 xs:py-4 sm:p-4 lg:p-6">
       {/* Background Pattern - Mobile optimized */}
-      <div className="fixed inset-0 opacity-5 pointer-events-none">
+      <div className="fixed inset-0 opacity-3 xs:opacity-5 pointer-events-none">
         <div 
           className="absolute inset-0 xs:hidden"
+          style={{
+            backgroundImage: `radial-gradient(circle at 10px 10px, rgba(255,255,255,0.08) 1px, transparent 0)`,
+            backgroundSize: '20px 20px'
+          }}
+        ></div>
+        <div 
+          className="absolute inset-0 hidden xs:block sm:hidden"
           style={{
             backgroundImage: `radial-gradient(circle at 15px 15px, rgba(255,255,255,0.1) 1px, transparent 0)`,
             backgroundSize: '30px 30px'
           }}
         ></div>
         <div 
-          className="absolute inset-0 hidden xs:block"
+          className="absolute inset-0 hidden sm:block"
           style={{
             backgroundImage: `radial-gradient(circle at 25px 25px, rgba(255,255,255,0.15) 2px, transparent 0)`,
             backgroundSize: '50px 50px'
@@ -151,7 +158,7 @@ const Dashboard = () => {
             </div>
           )}
 
-          {/* Links Grid - Enhanced responsiveness */}
+          {/* Links Grid - Enhanced with LinkCard responsiveness fix */}
           <div className="grid gap-2 xs:gap-3 sm:gap-4">
             {(filteredUrls || []).length === 0 && !loading && (
               <div className="text-center py-6 xs:py-8 sm:py-12">
@@ -165,17 +172,19 @@ const Dashboard = () => {
               </div>
             )}
             
-            {/* Enhanced LinkCard containers with better mobile responsiveness */}
+            {/* Mobile-optimized LinkCard containers with scaling fix */}
             {(filteredUrls || []).map((url, i) => (
               <div 
                 key={i} 
-                className="animate-fade-in-up w-full" 
+                className="animate-fade-in-up w-full max-w-full overflow-hidden" 
                 style={{animationDelay: `${Math.min(i * 0.05, 0.3)}s`}}
               >
-                {/* Responsive wrapper for LinkCard */}
-                <div className="w-full overflow-hidden rounded-lg xs:rounded-xl sm:rounded-2xl bg-gray-950/90 border border-gray-800/50 backdrop-blur-sm hover:bg-gray-900/80 hover:border-gray-700/70 transition-all duration-300">
-                  <div className="p-2 xs:p-3 sm:p-4 lg:p-6">
-                    <LinkCard url={url} fetchUrls={fnUrls} />
+                <div className="w-full max-w-full bg-gray-950/90 border border-gray-800/50 rounded-lg xs:rounded-xl sm:rounded-2xl backdrop-blur-sm hover:bg-gray-900/80 hover:border-gray-700/70 transition-all duration-300 overflow-hidden">
+                  <div className="p-1 xs:p-2 sm:p-3 lg:p-4 max-w-full">
+                    {/* Responsive scaling wrapper for LinkCard */}
+                    <div className="scale-75 xs:scale-85 sm:scale-95 lg:scale-100 origin-top-left transform-gpu">
+                      <LinkCard url={url} fetchUrls={fnUrls} />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -184,7 +193,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Enhanced CSS for mobile animations */}
+      {/* Enhanced CSS for mobile responsiveness and LinkCard fixes */}
       <style jsx>{`
         @keyframes fadeInUp {
           from {
@@ -202,10 +211,31 @@ const Dashboard = () => {
           opacity: 0;
         }
 
-        /* Ensure LinkCard content is responsive */
-        .animate-fade-in-up > div {
-          max-width: 100%;
-          box-sizing: border-box;
+        /* Force LinkCard responsiveness */
+        .animate-fade-in-up > div > div {
+          max-width: 100% !important;
+          overflow-x: hidden !important;
+          box-sizing: border-box !important;
+        }
+
+        /* Make all LinkCard content responsive */
+        .animate-fade-in-up img {
+          max-width: 100% !important;
+          height: auto !important;
+        }
+
+        .animate-fade-in-up * {
+          max-width: 100% !important;
+          box-sizing: border-box !important;
+        }
+
+        /* Prevent horizontal scrolling */
+        .animate-fade-in-up p,
+        .animate-fade-in-up div:not(.scale-75):not(.scale-85):not(.scale-95):not(.scale-100),
+        .animate-fade-in-up span {
+          word-wrap: break-word !important;
+          overflow-wrap: break-word !important;
+          word-break: break-word !important;
         }
 
         /* Touch-friendly states for mobile */
@@ -213,6 +243,40 @@ const Dashboard = () => {
           .group:active {
             transform: scale(0.95);
           }
+          
+          /* Additional mobile LinkCard overrides */
+          .animate-fade-in-up button {
+            font-size: 0.75rem !important;
+            padding: 0.25rem 0.5rem !important;
+            min-width: auto !important;
+          }
+
+          .animate-fade-in-up .text-lg {
+            font-size: 0.875rem !important;
+          }
+          
+          .animate-fade-in-up .text-base {
+            font-size: 0.8rem !important;
+          }
+        }
+
+        /* Ultra-small devices */
+        @media (max-width: 320px) {
+          .animate-fade-in-up {
+            transform: scale(0.9) !important;
+            transform-origin: top left !important;
+          }
+        }
+
+        /* Prevent any element from causing horizontal scroll */
+        * {
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+
+        /* Ensure smooth scaling transitions */
+        .scale-75, .scale-85, .scale-95, .scale-100 {
+          transition: transform 0.3s ease-in-out;
         }
       `}</style>
     </div>
